@@ -1,32 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 abstract class AppTheme {
-  static const Color _primaryColor = Color(0xFF6C63FF);
-  static const Color _secondaryColor = Color(0xFF03DAC6);
-  static const Color _errorColor = Color(0xFFCF6679);
+  static const Color _primaryDark = Color(0xFF7C6FF7);
+  static const Color _primaryLight = Color(0xFF6C63FF);
 
   static ThemeData light() {
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _primaryColor,
-        secondary: _secondaryColor,
-        error: _errorColor,
+        seedColor: _primaryLight,
         brightness: Brightness.light,
       ),
+      scaffoldBackgroundColor: const Color(0xFFF0F2FF),
       appBarTheme: const AppBarTheme(
-        centerTitle: true,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
@@ -34,25 +31,22 @@ abstract class AppTheme {
   static ThemeData dark() {
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _primaryColor,
-        secondary: _secondaryColor,
-        error: _errorColor,
+        seedColor: _primaryDark,
         brightness: Brightness.dark,
       ),
+      scaffoldBackgroundColor: const Color(0xFF0A0A1A),
       appBarTheme: const AppBarTheme(
-        centerTitle: true,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0,
+        centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       cardTheme: CardThemeData(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }
