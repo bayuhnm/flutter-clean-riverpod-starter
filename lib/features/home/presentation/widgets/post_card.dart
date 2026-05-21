@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/post_entity.dart';
 
-class PostCard extends StatelessWidget {
-  final PostEntity post;
+class DogImageCard extends StatelessWidget {
+  final DogImageEntity dog;
 
-  const PostCard({super.key, required this.post});
+  const DogImageCard({super.key, required this.dog});
 
   @override
   Widget build(BuildContext context) {
@@ -12,63 +12,94 @@ class PostCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Post ID badge
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '#${post.id}',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w600,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Image
+          AspectRatio(
+            aspectRatio: 16 / 10,
+            child: Image.network(
+              dog.imageUrl,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  color: colorScheme.surfaceContainerHighest,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                      strokeWidth: 2,
                     ),
                   ),
-                ),
-                Text(
-                  'User ${post.userId}',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: colorScheme.outline,
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: colorScheme.surfaceContainerHighest,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.broken_image_rounded,
+                          size: 40, color: colorScheme.outline),
+                      const SizedBox(height: 8),
+                      Text('Failed to load',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.outline,
+                          )),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Info
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '🐶',
+                    style: const TextStyle(fontSize: 18),
                   ),
                 ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        dog.displayName,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (dog.subBreed.isNotEmpty)
+                        Text(
+                          dog.breed,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.outline,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.favorite_border_rounded,
+                    color: colorScheme.outline, size: 20),
               ],
             ),
-            const SizedBox(height: 10),
-
-            // Title
-            Text(
-              post.title.replaceRange(0, 1, post.title[0].toUpperCase()),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                height: 1.3,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-
-            // Body
-            Text(
-              post.body,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                height: 1.5,
-              ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

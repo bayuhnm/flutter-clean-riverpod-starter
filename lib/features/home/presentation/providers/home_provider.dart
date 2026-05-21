@@ -11,12 +11,12 @@ enum HomeStatus { initial, loading, success, empty, error }
 
 class HomeState extends Equatable {
   final HomeStatus status;
-  final List<PostEntity> posts;
+  final List<DogImageEntity> images;
   final String? errorMessage;
 
   const HomeState({
     this.status = HomeStatus.initial,
-    this.posts = const [],
+    this.images = const [],
     this.errorMessage,
   });
 
@@ -28,46 +28,44 @@ class HomeState extends Equatable {
 
   HomeState copyWith({
     HomeStatus? status,
-    List<PostEntity>? posts,
+    List<DogImageEntity>? images,
     String? errorMessage,
   }) {
     return HomeState(
       status: status ?? this.status,
-      posts: posts ?? this.posts,
+      images: images ?? this.images,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [status, posts, errorMessage];
+  List<Object?> get props => [status, images, errorMessage];
 }
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
+// ─── UseCase Provider ─────────────────────────────────────────────────────────
 
-/// Provider for [GetPostsUseCase].
-final getPostsUseCaseProvider = Provider<GetPostsUseCase>((ref) {
+final getDogImagesUseCaseProvider = Provider<GetDogImagesUseCase>((ref) {
   final repository = ref.watch(homeRepositoryProvider);
-  return GetPostsUseCase(repository);
+  return GetDogImagesUseCase(repository);
 });
 
-/// StateNotifier that manages [HomeState].
-class HomeNotifier extends StateNotifier<HomeState> {
-  final GetPostsUseCase _getPostsUseCase;
+// ─── Notifier ─────────────────────────────────────────────────────────────────
 
-  HomeNotifier(this._getPostsUseCase) : super(const HomeState()) {
-    fetchPosts();
+class HomeNotifier extends StateNotifier<HomeState> {
+  final GetDogImagesUseCase _useCase;
+
+  HomeNotifier(this._useCase) : super(const HomeState()) {
+    fetchImages();
   }
 
-  Future<void> fetchPosts() async {
+  Future<void> fetchImages() async {
     state = state.copyWith(status: HomeStatus.loading, errorMessage: null);
-
     try {
-      final posts = await _getPostsUseCase();
-
-      if (posts.isEmpty) {
-        state = state.copyWith(status: HomeStatus.empty, posts: []);
+      final images = await _useCase();
+      if (images.isEmpty) {
+        state = state.copyWith(status: HomeStatus.empty, images: []);
       } else {
-        state = state.copyWith(status: HomeStatus.success, posts: posts);
+        state = state.copyWith(status: HomeStatus.success, images: images);
       }
     } on Exception catch (e) {
       state = state.copyWith(
@@ -77,11 +75,10 @@ class HomeNotifier extends StateNotifier<HomeState> {
     }
   }
 
-  Future<void> refresh() => fetchPosts();
+  Future<void> refresh() => fetchImages();
 }
 
-/// Provider for [HomeNotifier].
 final homeProvider = StateNotifierProvider<HomeNotifier, HomeState>((ref) {
-  final useCase = ref.watch(getPostsUseCaseProvider);
+  final useCase = ref.watch(getDogImagesUseCaseProvider);
   return HomeNotifier(useCase);
 });

@@ -5,34 +5,30 @@ import '../../../../core/network/api_service.dart';
 import '../../../../core/network/dio_client.dart';
 import '../models/post_model.dart';
 
-/// Abstract contract for the home remote data source.
 abstract class HomeRemoteDatasource {
-  Future<List<PostModel>> getPosts();
+  Future<DogImagesResponseModel> getRandomDogImages();
 }
 
-/// Concrete implementation using [DioClient].
 class HomeRemoteDatasourceImpl implements HomeRemoteDatasource {
   final DioClient _dioClient;
 
   const HomeRemoteDatasourceImpl(this._dioClient);
 
   @override
-  Future<List<PostModel>> getPosts() async {
-    final response = await _dioClient.get<List<dynamic>>(ApiConstants.posts);
+  Future<DogImagesResponseModel> getRandomDogImages() async {
+    final response = await _dioClient.get<Map<String, dynamic>>(
+      ApiConstants.randomImages,
+    );
 
     final data = response.data;
-
     if (data == null) {
       throw const ServerException(message: 'No data received from server.');
     }
 
-    return data
-        .map((json) => PostModel.fromJson(json as Map<String, dynamic>))
-        .toList();
+    return DogImagesResponseModel.fromJson(data);
   }
 }
 
-/// Provider for [HomeRemoteDatasource].
 final homeRemoteDatasourceProvider = Provider<HomeRemoteDatasource>((ref) {
   final dioClient = ref.watch(dioClientProvider);
   return HomeRemoteDatasourceImpl(dioClient);

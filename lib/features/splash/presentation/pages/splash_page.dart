@@ -21,14 +21,14 @@ class _SplashPageState extends State<SplashPage>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 900),
     );
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeIn),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1).animate(
+    _scaleAnimation = Tween<double>(begin: 0.75, end: 1).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
@@ -38,9 +38,7 @@ class _SplashPageState extends State<SplashPage>
 
   Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      context.go(RouteNames.home);
-    }
+    if (mounted) context.go(RouteNames.home);
   }
 
   @override
@@ -76,10 +74,10 @@ class _SplashPageState extends State<SplashPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Icon
+                    // Big dog emoji as logo
                     Container(
-                      width: 100,
-                      height: 100,
+                      width: 110,
+                      height: 110,
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         shape: BoxShape.circle,
@@ -88,27 +86,20 @@ class _SplashPageState extends State<SplashPage>
                           width: 2,
                         ),
                       ),
-                      child: const Icon(
-                        Icons.rocket_launch_rounded,
-                        size: 52,
-                        color: Colors.white,
+                      child: const Center(
+                        child: Text('🐶', style: TextStyle(fontSize: 52)),
                       ),
                     ),
                     const SizedBox(height: 28),
-
-                    // App name
                     Text(
-                      'Flutter Clean\nRiverpod Starter',
+                      'Dog Gallery',
                       textAlign: TextAlign.center,
-                      style: theme.textTheme.headlineMedium?.copyWith(
+                      style: theme.textTheme.headlineLarge?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 12),
-
-                    // Subtitle
+                    const SizedBox(height: 10),
                     Text(
                       'Clean Architecture • Riverpod • Dio',
                       textAlign: TextAlign.center,
@@ -118,8 +109,6 @@ class _SplashPageState extends State<SplashPage>
                       ),
                     ),
                     const SizedBox(height: 52),
-
-                    // Loading indicator
                     SizedBox(
                       width: 24,
                       height: 24,

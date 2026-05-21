@@ -12,12 +12,12 @@ class HomePage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('🐶 Dog Gallery'),
         actions: [
           if (state.isSuccess || state.hasError)
             IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Refresh',
+              icon: const Icon(Icons.refresh_rounded),
+              tooltip: 'Load new dogs',
               onPressed: () => ref.read(homeProvider.notifier).refresh(),
             ),
         ],
@@ -33,14 +33,12 @@ class HomePage extends ConsumerWidget {
     if (state.isLoading || state.isInitial) {
       return const _LoadingView();
     }
-
     if (state.hasError) {
       return _ErrorView(
         message: state.errorMessage ?? 'Something went wrong.',
         onRetry: () => ref.read(homeProvider.notifier).refresh(),
       );
     }
-
     if (state.isEmpty) {
       return const _EmptyView();
     }
@@ -48,10 +46,10 @@ class HomePage extends ConsumerWidget {
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.symmetric(vertical: 12),
-      itemCount: state.posts.length,
+      itemCount: state.images.length,
       separatorBuilder: (_, __) => const SizedBox(height: 4),
       itemBuilder: (context, index) {
-        return PostCard(post: state.posts[index]);
+        return DogImageCard(dog: state.images[index]);
       },
     );
   }
@@ -64,9 +62,7 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 }
 
@@ -79,34 +75,24 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.cloud_off_rounded,
-              size: 72,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.cloud_off_rounded,
+                size: 72, color: theme.colorScheme.error),
             const SizedBox(height: 16),
-            Text(
-              'Oops! Something went wrong',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            Text('Oops! Something went wrong',
+                style: theme.textTheme.titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(
-              message,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            Text(message,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant),
+                textAlign: TextAlign.center),
             const SizedBox(height: 24),
             FilledButton.icon(
               onPressed: onRetry,
@@ -126,34 +112,20 @@ class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.inbox_rounded,
-              size: 72,
-              color: theme.colorScheme.outline,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No data available',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Pull down to refresh',
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inbox_rounded, size: 72, color: theme.colorScheme.outline),
+          const SizedBox(height: 16),
+          Text('No dogs found 🐾',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text('Pull down to refresh',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
+                  color: theme.colorScheme.onSurfaceVariant)),
+        ],
       ),
     );
   }
